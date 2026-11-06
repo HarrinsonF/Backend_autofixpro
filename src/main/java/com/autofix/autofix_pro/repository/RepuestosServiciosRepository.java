@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RepuestosServiciosRepository extends JpaRepository<RepuestosServicios, Long> {
-    // Spring Data JPA ya incluye métodos como save(), findAll(), findById() por defecto.
+    boolean existsByCodigoSkuIgnoreCase(String codigoSku);
 }
