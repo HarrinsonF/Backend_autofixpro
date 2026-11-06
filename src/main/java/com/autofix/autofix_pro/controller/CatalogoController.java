@@ -2,7 +2,7 @@ package com.autofix.autofix_pro.controller;
 
 import com.autofix.autofix_pro.entity.RepuestosServicios;
 import com.autofix.autofix_pro.service.CatalogoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,24 +13,35 @@ import java.util.List;
 @RequestMapping("/api/v1/catalogo-items")
 public class CatalogoController {
 
-    @Autowired
-    private CatalogoService service;
+    private final CatalogoService service;
 
-    // Endpoint GET para listar catálogo
-    @GetMapping
-    public ResponseEntity<List<RepuestosServicios>> listarCatalogo() {
-        return new ResponseEntity<>(service.listarTodos(), HttpStatus.OK);
+    public CatalogoController(CatalogoService service) {
+        this.service = service;
     }
 
-    // Endpoint POST para registrar un nuevo ítem
+    @GetMapping
+    public ResponseEntity<List<RepuestosServicios>> listarTodos() {
+        return ResponseEntity.ok(service.listarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RepuestosServicios> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.obtenerPorId(id));
+    }
+
     @PostMapping
-    public ResponseEntity<?> registrarItem(@RequestBody RepuestosServicios item) {
-        try {
-            RepuestosServicios nuevoItem = service.registrarItem(item);
-            return new ResponseEntity<>(nuevoItem, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            // Retorna HTTP 400 con el mensaje de error si el precio o stock es negativo
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<RepuestosServicios> registrar(@Valid @RequestBody RepuestosServicios item) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.registrar(item));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RepuestosServicios> actualizar(@PathVariable Long id, @Valid @RequestBody RepuestosServicios detalles) {
+        return ResponseEntity.ok(service.actualizar(id, detalles));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }
