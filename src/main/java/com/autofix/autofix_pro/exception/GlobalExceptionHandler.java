@@ -14,7 +14,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+    public ResponseEntity<Object> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.NOT_FOUND.value());
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity> manejarReglaDeNegocio(IllegalArgumentException ex) {
+    public ResponseEntity<Object> manejarReglaDeNegocio(IllegalArgumentException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.CONFLICT.value());
@@ -34,10 +34,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity> manejarValidaciones(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Object> manejarValidaciones(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(err ->
-                errores.put(err.getField(), err.getDefaultMessage())
+        ex.getBindingResult().getFieldErrors().forEach(err -> 
+            errores.put(err.getField(), err.getDefaultMessage())
         );
 
         Map<String, Object> body = new HashMap<>();
